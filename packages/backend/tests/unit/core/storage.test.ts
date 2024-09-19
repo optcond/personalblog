@@ -7,7 +7,7 @@ import {
   jest,
 } from "@jest/globals";
 import fs from "fs";
-import { FileStorage } from "../../src/core/storage";
+import { FileStorage } from "../../../src/core/storage";
 
 interface TestDTO {
   id?: string;

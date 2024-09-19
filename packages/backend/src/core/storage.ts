@@ -10,29 +10,30 @@ interface IStorage<T extends { id?: string }> {
 }
 
 export class FileStorage<T extends { id?: string }> implements IStorage<T> {
-  protected static basePath: string = "./storage";
+  static basePath: string = "./storage";
+  localPath: string;
+
   static setBasePath(path: string) {
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path);
-    }
     this.basePath = path;
   }
 
-  constructor(protected localPath: string) {}
+  constructor(localPath: string) {
+    if (!fs.existsSync(FileStorage.basePath)) {
+      fs.mkdirSync(FileStorage.basePath);
+    }
+
+    if (!fs.existsSync(`${FileStorage.basePath}/${localPath}`)) {
+      fs.mkdirSync(`${FileStorage.basePath}/${localPath}`);
+    }
+
+    this.localPath = localPath;
+  }
 
   save(data: T): T {
     const obj = {
       ...data,
       id: uuidv4(),
     };
-
-    if (!fs.existsSync(FileStorage.basePath)) {
-      fs.mkdirSync(FileStorage.basePath);
-    }
-
-    if (!fs.existsSync(`${FileStorage.basePath}/${this.localPath}`)) {
-      fs.mkdirSync(`${FileStorage.basePath}/${this.localPath}`);
-    }
 
     fs.writeFileSync(
       `${FileStorage.basePath}/${this.localPath}/${obj.id}`,
